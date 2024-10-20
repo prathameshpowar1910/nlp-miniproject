@@ -44,26 +44,20 @@ sequences = tokenizer.texts_to_sequences(data['cleaned_text'])
 X = pad_sequences(sequences, maxlen=200)
 y = data['sentiment'].values
 
-# Split data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Build the LSTM model
 model = Sequential()
 model.add(Embedding(input_dim=5000, output_dim=64, input_length=200))
 model.add(LSTM(128, dropout=0.2, recurrent_dropout=0.2))
 model.add(Dense(1, activation='sigmoid'))
 
-# Compile the model
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-# Train the model
 model.fit(X_train, y_train, epochs=5, batch_size=64, validation_data=(X_test, y_test))
 
-# Evaluate the model
 loss, accuracy = model.evaluate(X_test, y_test)
 print(f'Test Accuracy: {accuracy * 100:.2f}%')
 
-# Function for prediction
 def predict_sentiment(review):
     cleaned_review = preprocess_text(review)
     sequence = tokenizer.texts_to_sequences([cleaned_review])
@@ -71,7 +65,7 @@ def predict_sentiment(review):
     prediction = model.predict(padded_sequence)[0][0]
     return "Positive" if prediction > 0.5 else "Negative"
 
-# Prediction example
+
 sample_review = "The product was excellent, I really liked it!"
 print(f"Review: {sample_review}")
 print(f"Predicted Sentiment: {predict_sentiment(sample_review)}")
